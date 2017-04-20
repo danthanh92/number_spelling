@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from number_spelling import NumberSpelling
+from .number_spelling import *
 
 
 class EnglishNumberSpelling(NumberSpelling):

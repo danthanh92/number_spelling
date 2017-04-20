@@ -10,6 +10,7 @@ class NumberSpelling(object):
         self._link_word = ""
 
     def number_to_word(self, num_string):
+        num_string = validate_number(num_string)
         if len(num_string) <= 3:
             return self._block_to_word(num_string, True)
 
@@ -26,9 +27,9 @@ class NumberSpelling(object):
                 block = self._block_to_word(num_string[i - 3: i], False)
 
             block_name = self._block_name[block_position]
-            if len(block) != 0:								  # block_num != 0
+            if len(block) != 0:
                 words = block + " " + block_name + (" " if len(words) else "") + words
-            elif block_position == len(self._block_name) - 1: # block_num = 0 and block_position = final block_name ("billion")
+            elif block_position == len(self._block_name) - 1:
                 words = block_name + (" " if len(words) else "") + words
 
             if block_position == len(self._block_name) - 1:
@@ -36,27 +37,17 @@ class NumberSpelling(object):
             else:
                 block_position += 1
 
-        return words
-
-    def is_valid_number(self, num_string):
-        if num_string.isdigit():
-            match = re.search('[^0]', num_string)
-            if match:
-                return (True, num_string[match.start():])
-            else:
-                return (True, '0')
-        else:
-            return (False, num_string)
+        return words.strip()
 
     def _block_to_word(self, block, is_first_block):
         words = ""
         number = int(block)
-        if is_first_block == True and number < 10:
+        if is_first_block is True and number < 10:
             return self._unit[number]
         elif number == 0:		# number = 0 and is_first_block = False
             return words
 
-        first_digit = number / 100
+        first_digit = number // 100
         number %= 100
         if first_digit != 0:		# read first digit (hundreds)
             words = self._unit[first_digit] + " " + self._tens[10] + (" " if number else "")
@@ -67,7 +58,7 @@ class NumberSpelling(object):
         elif number < 20:		# second digit = 1
             return words + self._unit[number]
 
-        second_digit = number / 10
+        second_digit = number // 10
         number %= 10
         if number != 0:			# third digit != 0
             words += self._tens[second_digit] + " " + self._unit[number]
@@ -75,5 +66,22 @@ class NumberSpelling(object):
             words += self._tens[second_digit]
 
         return words
+
+
+def is_valid_number(num_string):
+    if num_string.isdigit():
+        return True
+    else:
+        return False
+
+
+def validate_number(num_string):
+    match = re.search('[^0]', num_string)
+    if match:
+        return num_string[match.start():]
+    else:
+        return '0'
+
+
 
 
